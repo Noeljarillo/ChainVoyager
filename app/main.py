@@ -14,15 +14,18 @@ def chat_endpoint():
     try:
         data = request.get_json()
         prompt = data.get('prompt')
-        wallet = data.get('wallet')  # Optional wallet parameter
+        wallet = data.get('wallet')
 
         if not prompt:
             return jsonify({'error': 'Prompt is required'}), 400
 
+        if not wallet:
+            return jsonify({'error': 'Wallet is required'}), 400
+
         openai_api_key = os.environ.get('OPENAI_API_KEY')
         agent = DeFiAgent(openai_api_key)
         user_input = prompt
-        result = agent.process_request(user_input)
+        result = agent.process_request(user_input, wallet)
         print("Classification:", result['classification'])
         print("Result:", result['result'])
         print("Summary:", result['summary'])
