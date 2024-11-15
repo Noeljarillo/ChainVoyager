@@ -36,7 +36,7 @@ class DeFiAgent:
 
     def process_request(self, user_input, user_wallet):
         classification = self.classify_user_input(user_input)
-        if not classification or classification == '4':
+        if not classification or classification == '5':
             return {
                 'classification': classification,
                 'result': None,
@@ -98,6 +98,8 @@ class DeFiAgent:
             return self.optimize_portfolio(user_input, user_wallet)
         elif '3' in classification:
             return self.create_new_position(user_input, user_wallet)
+        elif '4' in classification:
+            return self.explain_positions(user_input, user_wallet)
         else:
             return None
 
