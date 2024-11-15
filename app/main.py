@@ -28,8 +28,8 @@ def chat_endpoint():
         print("Summary:", result['summary'])
 
         response = {
-            'recommendation': f'Received prompt: {prompt}',
-            'action': None
+            'summary': result['summary'],
+            'action': result['result']
         }
 
         return jsonify(response)
