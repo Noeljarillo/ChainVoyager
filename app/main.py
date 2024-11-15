@@ -37,5 +37,13 @@ def chat_endpoint():
     except Exception as e:
         return jsonify({'error': str(e)}), 500
 
+@app.route('/get_address_positions', methods=['POST'])
+def get_address_positions():
+    data = request.get_json()
+    wallet = data.get('wallet')
+
+    pass
+    # return jsonify(positions)
+
 if __name__ == '__main__':
     app.run(debug=True)
