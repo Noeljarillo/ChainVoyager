@@ -8,7 +8,7 @@ import json
 BASE_URL = "https://api.1inch.dev/portfolio/portfolio/v4/overview/erc20"
 BASE_URL_HISTORY = "https://api.1inch.dev/history/v2.0/history"
 BASE_URL_PROTOCOLS = "https://api.1inch.dev/portfolio/portfolio/v4/overview/protocols/details"
-API_KEY = ""
+API_KEY = os.environ.get("1INCH_API_KEY")
 EXAMPLE_WALLET = '0x9558c18138401bCD4caE96f8be6C5caF22AD2cbf'
 
 # Headers for authorization
