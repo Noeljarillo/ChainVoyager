@@ -28,6 +28,8 @@ You are an assistant that summarizes actions to take based on the classification
 
 Classification: {classification}
 User Input: {user_input}
+Input Parameters: {parameters}
+Result: {result}
 
 Provide a concise summary of the actions that need to be taken. Remember that the user will need to sign the transactions.
 """
@@ -78,7 +80,23 @@ Output format:
 """
 
 def get_optimize_portfolio_parameters_prompt(user_input):
-    pass
+    return f"""
+You are an assistant that extracts parameters from user inputs for the optimize portfolio action and returns them in a JSON format.
+
+User Input: {user_input}
+
+Extract the following parameters:
+- Exposure: Single or Multi -> If the user wants to invest in a single asset or a mix of assets
+- Stablecoin: True or False -> If the user wants to invest in secure assets
+- Chain: Ethereum, Arbitrum, etc -> If the user wants to invest in a specific chain
+
+Output format:
+{{
+    'exposure': 'Single or Multi',
+    'stablecoin': 'True or False',
+    'chain': 'Ethereum, Arbitrum, etc'
+}}
+"""
 
 def get_create_new_position_parameters_prompt(user_input):
     pass

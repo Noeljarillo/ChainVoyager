@@ -26,7 +26,7 @@ def chat_endpoint():
             return jsonify({'error': 'Wallet is required'}), 400
 
         openai_api_key = os.environ.get('OPENAI_API_KEY')
-        agent = DeFiAgent(openai_api_key)
+        agent = DeFiAgent(openai_api_key, '../db/pools_data.db')
         user_input = prompt
         result = agent.process_request(user_input, wallet)
         print("Classification:", result['classification'])

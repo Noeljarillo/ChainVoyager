@@ -1,12 +1,12 @@
-import sqlite3  
-import pandas as pd  
-import numpy as np  
-from sklearn.ensemble import RandomForestRegressor  
-from sklearn.model_selection import train_test_split  
-from sklearn.preprocessing import OneHotEncoder, FunctionTransformer  
-from sklearn.impute import SimpleImputer  
-from sklearn.pipeline import Pipeline  
-from sklearn.compose import ColumnTransformer  
+import sqlite3
+import pandas as pd
+import numpy as np
+from sklearn.ensemble import RandomForestRegressor
+from sklearn.model_selection import train_test_split
+from sklearn.preprocessing import OneHotEncoder, FunctionTransformer
+from sklearn.impute import SimpleImputer
+from sklearn.pipeline import Pipeline
+from sklearn.compose import ColumnTransformer
 
 def get_optimal_pools(
     db_path,
