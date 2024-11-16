@@ -1,7 +1,7 @@
 "use client";
 import { cn } from "@/lib/utils";
 import { motion, MotionValue } from "framer-motion";
-import React from "react";
+import React, { useEffect } from "react";
 import Link from "next/link";
 import { useAccount } from "wagmi";
 import { ConnectButton } from "@rainbow-me/rainbowkit";
@@ -22,7 +22,13 @@ export const GoogleGeminiEffect = ({
   description: string;
   className?: string;
 }) => {
-  const { isConnected } = useAccount();
+  const { isConnected, address } = useAccount();
+
+  useEffect(() => {
+    if (isConnected && address) {
+      localStorage.setItem("wallet", address);
+    }
+  }, [address, isConnected]);
 
   return (
     <div className={cn("sticky top-80", className)}>
