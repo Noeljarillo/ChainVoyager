@@ -20,14 +20,11 @@ type Props = {
   cookie?: string | null;
 };
 
-const API_ENDPOINT = process.env["NEXT_PUBLIC_API_URL"] + "/chat";
-
 const CustomModelAdapter: ChatModelAdapter = {
   async *run({ messages, abortSignal }) {
-    let data = `Attempting to fetch data from ${API_ENDPOINT}...`;
-
+    let data = "";
     try {
-      const res = await fetch(API_ENDPOINT, {
+      const res = await fetch("/api/chat", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -46,7 +43,7 @@ const CustomModelAdapter: ChatModelAdapter = {
       data = (await res.json())["summary"];
     } catch (error) {
       if (error instanceof Error) {
-        data = error.message;
+        data = error.message ?? "Unknown error, please try again later.";
       } else {
         data = "Unknown error, please try again later.";
       }

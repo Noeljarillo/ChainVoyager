@@ -26,7 +26,8 @@
     "tailwind-merge": "^2.5.4",
     "tailwindcss-animate": "^1.0.7",
     "viem": "2.x",
-    "wagmi": "^2.12.33"
+    "wagmi": "^2.12.33",
+    "zod": "^3.23.8"
   },
   "devDependencies": {
     "typescript": "^5",
