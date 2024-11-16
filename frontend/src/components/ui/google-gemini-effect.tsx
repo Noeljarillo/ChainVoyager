@@ -3,6 +3,8 @@ import { cn } from "@/lib/utils";
 import { motion, MotionValue } from "framer-motion";
 import React from "react";
 import Link from "next/link";
+import { useAccount } from "wagmi";
+import { ConnectButton } from "@rainbow-me/rainbowkit";
 
 const transition = {
   duration: 0,
@@ -20,6 +22,8 @@ export const GoogleGeminiEffect = ({
   description: string;
   className?: string;
 }) => {
+  const { isConnected } = useAccount();
+
   return (
     <div className={cn("sticky top-80", className)}>
       <p className="text-lg md:text-7xl font-normal pb-4 text-center bg-clip-text text-transparent bg-gradient-to-b from-neutral-100 to-neutral-300">
@@ -29,12 +33,20 @@ export const GoogleGeminiEffect = ({
         {description}
       </p>
       <div className="w-full h-[890px] -top-60 md:-top-40  flex items-center justify-center bg-red-transparent absolute">
-        <Link
-          href={"/chat"}
-          className={`font-bold bg-white rounded-md md:px-4 md:py-2 px-2 py-1 md:mt-24 mt-8 z-30 md:text-base text-black text-xs w-fit`}
-        >
-          Launch App
-        </Link>
+        {isConnected
+          ? (
+            <Link
+              href={"/chat"}
+              className={`font-bold bg-white rounded-md md:px-4 md:py-2 px-2 py-1 md:mt-24 mt-8 z-30 md:text-base text-black text-xs w-fit`}
+            >
+              Launch App
+            </Link>
+          )
+          : (
+            <div className="z-50">
+              <ConnectButton />
+            </div>
+          )}
       </div>
       <svg
         width="1440"
