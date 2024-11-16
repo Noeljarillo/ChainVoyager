@@ -33,15 +33,15 @@ def chat_endpoint():
         openai_api_key = os.environ.get('OPENAI_API_KEY')
         agent = DeFiAgent(openai_api_key, '../db/pools_data.db')
         result = agent.process_request(prompt, wallet)
-        response = {
-            'classification': result['classification'],
-            'summary': result['summary'],
-            'result': result['result'],
-            'parameters': result['parameters'],
-            'action': result['action']
-        }
+        # response = {
+        #     'classification': result['classification'],
+        #     'summary': result['summary'],
+        #     'result': result['result'],
+        #     'parameters': result['parameters'],
+        #     'action': result['action']
+        # }
 
-        return jsonify(response)
+        return jsonify(result['result'])
 
     except Exception as e:
         return jsonify({'error': str(e)}), 500

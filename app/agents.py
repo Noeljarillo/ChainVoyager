@@ -40,20 +40,26 @@ class DeFiAgent:
                 'result': None,
                 'summary': "I can only assist with the following actions: Swap tokens, Optimize portfolio, Create new position."
             }
-        result = self._execute_action(classification, user_input, user_wallet)
-        summary = self._summarize_actions(
-            classification,
-            user_input,
-            result['parameters'],
-            result['result']
-        )
-        return {
-            'classification': classification,
-            'result': result['result'],
-            'action': result['action'],
-            'summary': summary,
-            'parameters': result['parameters']
+        # result = self._execute_action(classification, user_input, user_wallet)
+        result = {
+            'result': self.explain_positions(user_input, user_wallet)
         }
+
+        return result
+
+        # summary = self._summarize_actions(
+        #     classification,
+        #     user_input,
+        #     result['parameters'],
+        #     result['result']
+        # )
+        # return {
+        #     'classification': classification,
+        #     'result': result['result'],
+        #     'action': result['action'],
+        #     'summary': summary,
+        #     'parameters': result['parameters']
+        # }
 
     def swap_tokens(self, user_input, user_wallet):
         print("Executing token swap... " + user_wallet)
