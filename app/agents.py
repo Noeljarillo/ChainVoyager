@@ -10,6 +10,7 @@ from prompts import get_classifier_prompt, get_summarizer_prompt, \
 from tools.find_optimal import get_optimal_pools
 from pools import PoolsDatabase
 from tools.one_inch_utils import get_combined_details
+from tools.swap_executor import build_transaction_payload
 
 EXAMPLE_WALLET = '0x9558c18138401bCD4caE96f8be6C5caF22AD2cbf'
 
@@ -64,7 +65,7 @@ class DeFiAgent:
         print("Parameters: " + parameters)
 
         # Generate calldata
-
+        calldata = build_transaction_payload()
         return {
             'result': {
                 'token_1': 'DAI',

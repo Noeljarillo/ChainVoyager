@@ -52,7 +52,7 @@ def get_address_positions():
     wallet = data.get('wallet')
     openai_api_key = os.environ.get('OPENAI_API_KEY')
     agent = DeFiAgent(openai_api_key, '../db/pools_data.db')
-    positions = agent.get_address_positions(wallet)
+    positions = agent.get_positions(wallet)
     return jsonify(positions)
 
 @app.route('/get_chart_data', methods=['POST'])
