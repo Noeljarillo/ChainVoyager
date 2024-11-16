@@ -17,6 +17,40 @@ HEADERS = {
     'Content-Type': 'application/json'
 }
 
+def get_combined_details(
+    wallet_address: str,
+    chain_id: str,
+    from_timestamp: str,
+    to_timestamp: str,
+    include_closed: bool = True,
+    closed_threshold: int = 10,
+    use_cache: bool = False
+):
+    protocol_details = get_protocol_details(
+        wallet_address,
+        chain_id,
+        include_closed,
+        closed_threshold,
+        use_cache
+    )
+
+    pnl_details = get_profit_and_loss(
+        wallet_address,
+        chain_id,
+        from_timestamp,
+        to_timestamp
+    )
+
+    token_details = get_token_details(wallet_address, chain_id)
+
+    combined_result = {
+        "protocol": protocol_details,
+        "token": token_details,
+        "pnl": pnl_details
+    }
+
+    return combined_result
+
 def get_protocol_details(wallet_address: str, chain_id: str, include_closed: bool = True, closed_threshold: int = 10, use_cache: bool = False):
     """
     Fetch protocol details including ROI, APR, unclaimed fees, and other metrics.
