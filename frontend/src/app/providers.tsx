@@ -3,6 +3,7 @@
 import { cookieToInitialState, WagmiProvider } from "wagmi";
 import { darkTheme, RainbowKitProvider } from "@rainbow-me/rainbowkit";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { createContext, useState } from "react";
 
 import { config } from "@/lib/config";
 
@@ -33,16 +34,21 @@ const CustomModelAdapter: ChatModelAdapter = {
         },
         signal: abortSignal,
         body: JSON.stringify({
-          prompt: JSON.stringify(messages),
+          prompt: messages.length > 1
+            ? {
+              context: messages.slice(0, -1),
+              prompt: messages[messages.length - 1],
+            }
+            : messages,
           wallet: "0x1234567890123456789012345678901234567890",
         }),
       });
-      data += await res.text();
+      data = (await res.json())["summary"];
     } catch (error) {
       if (error instanceof Error) {
-        data += error.message;
+        data = error.message;
       } else {
-        data += "Unknown error";
+        data = "Unknown error, please try again later.";
       }
     }
 
@@ -59,9 +65,18 @@ const CustomModelAdapter: ChatModelAdapter = {
   },
 };
 
+export const GraphContext = createContext<{
+  graphs: ("pie" | "line" | "bar")[];
+  setGraphs: React.Dispatch<React.SetStateAction<("pie" | "line" | "bar")[]>>;
+}>({
+  graphs: [],
+  setGraphs: () => {},
+});
+
 export default function Providers({ children, cookie }: Props) {
   const initialState = cookieToInitialState(config, cookie);
   const runtime = useLocalRuntime(CustomModelAdapter);
+  const [graphs, setGraphs] = useState<("pie" | "line" | "bar")[]>([]);
 
   return (
     <WagmiProvider config={config} initialState={initialState}>
@@ -75,9 +90,13 @@ export default function Providers({ children, cookie }: Props) {
             overlayBlur: "small",
           })}
         >
-          <AssistantRuntimeProvider runtime={runtime}>
-            {children}
-          </AssistantRuntimeProvider>
+          <GraphContext.Provider
+            value={{ graphs, setGraphs }}
+          >
+            <AssistantRuntimeProvider runtime={runtime}>
+              {children}
+            </AssistantRuntimeProvider>
+          </GraphContext.Provider>
         </RainbowKitProvider>
       </QueryClientProvider>
     </WagmiProvider>
