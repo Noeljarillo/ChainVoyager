@@ -9,6 +9,7 @@ from prompts import get_classifier_prompt, get_summarizer_prompt, \
 
 from tools.find_optimal import get_optimal_pools
 from pools import PoolsDatabase
+from tools.one_inch_utils import get_combined_details
 
 EXAMPLE_WALLET = '0x9558c18138401bCD4caE96f8be6C5caF22AD2cbf'
 
@@ -169,15 +170,8 @@ class DeFiAgent:
 
     def get_positions(self, user_wallet):
         print("Getting positions... " + user_wallet)
-        return {
-            'result': {  # TODO: Implement this
-                'assets': {
-                    'DAI': 100,
-                    'USDC': 100,
-                    'ETH': 0.04
-                }
-            }
-        }
+        combined_details = get_combined_details(user_wallet, '1', '2023-01-01T00:00:00Z', '2024-11-10T23:59:59Z')
+        return combined_details
 
     def _execute_action(self, classification, user_input, user_wallet):
         if '1' in classification:
