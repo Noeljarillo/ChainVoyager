@@ -1,16 +1,18 @@
 "use client";
 import ChatThread from "@/components/chat-thread";
 import { IconChartBar } from "@tabler/icons-react";
-import { useContext } from "react";
+import { useContext, useEffect } from "react";
 import { GraphContext } from "@/app/providers";
 import { BarChartComponent } from "@/components/bar-chart";
 import { PieChartComponent } from "@/components/pie-chart";
 import { AreaChartComponent } from "@/components/area-chart";
+import { useAccount } from "wagmi";
 
 type ExtractFromContext<T> = T extends React.Context<infer U> ? U : never;
 
 export default function ChatComponent() {
   const { graphs } = useContext(GraphContext);
+  const { isConnected } = useAccount();
   const links = [
     {
       label: "Charts",
@@ -20,6 +22,12 @@ export default function ChatComponent() {
       ),
     },
   ];
+
+  useEffect(() => {
+    if (!isConnected) {
+      window.location.href = "/";
+    }
+  }, [isConnected]);
 
   const graphKeyToComponent: {
     [key in ExtractFromContext<typeof GraphContext>["graphs"][number]]:

@@ -37,7 +37,7 @@ const CustomModelAdapter: ChatModelAdapter = {
               prompt: messages[messages.length - 1],
             }
             : messages,
-          wallet: "0x1234567890123456789012345678901234567890",
+          wallet: localStorage.getItem("wallet"),
         }),
       });
       data = (await res.json())["summary"];

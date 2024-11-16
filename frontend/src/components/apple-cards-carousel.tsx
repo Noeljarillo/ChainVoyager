@@ -51,31 +51,31 @@ const data = [
   {
     category: "AI powered suggestions",
     title: "Based on your portfolio.",
-    src: "https://images.unsplash.com/photo-1730774344169-154bc63978d9",
+    src: "/london.jpeg",
     content: <DummyContent kind="ai-suggestions" />,
   },
   {
     category: "Track your portfolio",
     title: "In real-time, no delays, only insights.",
-    src: "https://images.unsplash.com/photo-1731524999532-642d0c39ad76",
+    src: "/surf.jpeg",
     content: <DummyContent kind="track-portfolio" />,
   },
   {
     category: "Rebalance your portfolio",
     title: "Suited to your risk appetite.",
-    src: "https://images.unsplash.com/photo-1731450451248-dab040040c96",
+    src: "/path.jpeg",
     content: <DummyContent kind="rebalance-portfolio" />,
   },
   {
     category: "DeFi strategies",
     title: "Advanced strategies for everyone.",
-    src: "https://images.unsplash.com/photo-1728963606465-590b0c43dc5a",
+    src: "/seal.jpeg",
     content: <DummyContent kind="defi-strategies" />,
   },
   {
     category: "Execute trades",
     title: "With a few clicks, without any hassle.",
-    src: "https://images.unsplash.com/photo-1731453171960-0f8c884c72a4",
+    src: "/beach.jpeg",
     content: <DummyContent kind="execute-trades" />,
   },
 ];

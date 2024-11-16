@@ -20,8 +20,8 @@ services:
     volumes:
       - ./frontend:/app/next-app
     restart: always
-    environment:
-      - NEXT_PUBLIC_API_URL=http://ai-app:5000
+    env_file:
+      - ./frontend/.env
     ports:
       - 8080:3000
     depends_on:
