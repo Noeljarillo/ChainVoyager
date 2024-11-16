@@ -1,9 +1,9 @@
 from get_yields import fetch_and_save_pools_data
 from find_optimal import get_optimal_pools
 import os
-from one_inch_utils import get_protocol_details, get_token_details, get_transaction_history, get_profit_and_loss, get_current_value, delay
+from one_inch_utils import get_protocol_details, get_token_details, get_transaction_history, get_profit_and_loss, get_current_value, delay, get_transaction_history, get_chart
 
-WALLET_ADDRESS = os.getenv("WALLET_ADDRESS_EXAMPLE")
+WALLET_ADDRESS = "0x9558c18138401bCD4caE96f8be6C5caF22AD2cbf"
 CHAIN_ID = 1
 
 def test_fetch_and_save_pools_data():
@@ -42,6 +42,13 @@ def test():
 
     print("\nFetching Profit and Loss (PnL) and ROI...")
     pnl = get_profit_and_loss(WALLET_ADDRESS, CHAIN_ID, from_timestamp, to_timestamp)
+    if pnl:
+        print("Profit and Loss:")
+        print(pnl)
+    delay(2)
+
+    print("\nFetching history")
+    pnl =  get_chart(WALLET_ADDRESS, CHAIN_ID, "1year")
     if pnl:
         print("Profit and Loss:")
         print(pnl)
