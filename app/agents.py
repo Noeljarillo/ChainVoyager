@@ -5,6 +5,10 @@ from prompts import get_classifier_prompt, get_summarizer_prompt, \
     get_swap_parameters_prompt, get_explain_positions_prompt, \
     get_optimize_portfolio_parameters_prompt, get_create_new_position_parameters_prompt
 
+from tools.one_inch_utils import get_protocol_details
+
+EXAMPLE_WALLET = '0x9558c18138401bCD4caE96f8be6C5caF22AD2cbf'
+
 load_dotenv()
 
 class DeFiAgent:
@@ -65,8 +69,8 @@ class DeFiAgent:
         }
 
     def optimize_portfolio(self, user_input, user_wallet):
-        # Implement the logic to optimize the portfolio
         print("Optimizing portfolio... " + user_wallet)
+
         # Extract parameters from user input
         prompt = get_optimize_portfolio_parameters_prompt(user_input)
         parameters = self._send_message(prompt, "You are an assistant that extracts parameters from user inputs.")
@@ -85,8 +89,8 @@ class DeFiAgent:
         }
 
     def create_new_position(self, user_input, user_wallet):
-        # Implement the logic to open a new position in an LP
         print("Creating new position... " + user_wallet)
+
         # Extract parameters from user input
         prompt = get_create_new_position_parameters_prompt(user_input)
         parameters = self._send_message(prompt, "You are an assistant that extracts parameters from user inputs.")

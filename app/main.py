@@ -2,6 +2,9 @@
 # - chat_endpoint:
 #   - Input: prompt, user wallet?, [...]
 #   - Output: Recomendaction, Action?
+# - get_address_positions:
+#   - Input: wallet
+#   - Output: positions
 
 import os
 from flask import Flask, request, jsonify

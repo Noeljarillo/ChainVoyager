@@ -1,11 +1,11 @@
 from get_yields import fetch_and_save_pools_data
 from find_optimal import get_optimal_pools
 import os
-from Iinch_utils import get_protocol_details, get_token_details, get_transaction_history, get_profit_and_loss, get_current_value, delay
+from one_inch_utils import get_protocol_details, get_token_details, get_transaction_history, get_profit_and_loss, get_current_value, delay
 
 WALLET_ADDRESS = os.getenv("WALLET_ADDRESS_EXAMPLE")
+CHAIN_ID = 1
 
-CHAIN_ID = 1 
 def test_fetch_and_save_pools_data():
 
     db_path = "../../db/pools_data.db"
