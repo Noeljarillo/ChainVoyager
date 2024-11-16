@@ -32,8 +32,7 @@ def chat_endpoint():
 
         openai_api_key = os.environ.get('OPENAI_API_KEY')
         agent = DeFiAgent(openai_api_key, '../db/pools_data.db')
-        user_input = prompt
-        result = agent.process_request(user_input, wallet)
+        result = agent.process_request(prompt, wallet)
         response = {
             'classification': result['classification'],
             'summary': result['summary'],
@@ -51,9 +50,10 @@ def chat_endpoint():
 def get_address_positions():
     data = request.get_json()
     wallet = data.get('wallet')
-
-    pass
-    # return jsonify(positions)
+    openai_api_key = os.environ.get('OPENAI_API_KEY')
+    agent = DeFiAgent(openai_api_key, '../db/pools_data.db')
+    positions = agent.get_address_positions(wallet)
+    return jsonify(positions)
 
 @app.route('/get_chart_data', methods=['POST'])
 def get_chart_data():
