@@ -16,5 +16,8 @@
 1. Fill in the env variables under the `.env` file.
 
 ```sh
-NEXT_PUBLIC_API_URL=https://your-api-url.com
+NEXT_PUBLIC_API_URL=
+PRIVATE_KEY=
+NODE_URL=
+DEV_PORTAL_API_TOKEN=
 ```
