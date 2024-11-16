@@ -10,6 +10,7 @@ import os
 from flask import Flask, request, jsonify
 from flask_cors import CORS, cross_origin
 from agents import DeFiAgent
+from tools.one_inch_utils import get_chart
 
 app = Flask(__name__)
 cors = CORS(app)
@@ -53,6 +54,20 @@ def get_address_positions():
 
     pass
     # return jsonify(positions)
+
+@app.route('/get_chart_data', methods=['POST'])
+def get_chart_data():
+    try:
+        data = request.get_json()
+        wallet = data.get('wallet')
+        chain_id = data.get('chain_id')
+        timerange = data.get('timerange')
+
+        chart = get_chart(wallet, chain_id, timerange)
+        return jsonify(chart)
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
 
 if __name__ == '__main__':
     app.run(debug=True, host="0.0.0.0")

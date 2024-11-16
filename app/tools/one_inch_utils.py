@@ -102,7 +102,6 @@ def get_chart(wallet_address: str, chain_id: str, timerange: str):
     except requests.RequestException as e:
         print(f"Error fetching profit and loss: {e}")
         return None
-    
 
 if __name__ == "__main__":
     # response = get_profit_and_loss(EXAMPLE_WALLET, 1, '2024-01-01T00:00:00Z', '2025-01-T23:59:59Z')
