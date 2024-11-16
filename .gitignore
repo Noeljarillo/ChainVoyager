@@ -78,7 +78,3 @@ wheels/
 # Flask
 instance/
 .webassets-cache
-
-# Database
-*.db
-*.sqlite3
