@@ -117,6 +117,14 @@ class DeFiAgent:
         print("Parameters: " + parameters)
 
         # TODO: Generate calldata and actions
+
+        summary = self._summarize_actions(
+            '3',
+            user_input,
+            parameters,
+            None
+        )
+
         return {
             'result': "",
             'action': None,  # TODO: Implement this
@@ -155,7 +163,7 @@ class DeFiAgent:
         pools_db.close()
         return {
             'result': explanation,
-            'action': None,
+            'action': pools,
             'parameters': parameters
         }
 

@@ -68,4 +68,3 @@ def test():
         print(protocol_details)
 
 test()
-
