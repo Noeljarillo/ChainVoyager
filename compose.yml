@@ -9,6 +9,8 @@ services:
     restart: always
     env_file:
       - ./app/.env
+    networks:
+      - app-network
 
   next-app:
     container_name: next-app
@@ -24,3 +26,9 @@ services:
       - 8080:3000
     depends_on:
       - ai-app
+    networks:
+      - app-network
+
+networks:
+  app-network:
+    driver: bridge
