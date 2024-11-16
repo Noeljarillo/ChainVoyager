@@ -8,11 +8,15 @@
 
 import os
 from flask import Flask, request, jsonify
+from flask_cors import CORS, cross_origin
 from agents import DeFiAgent
 
 app = Flask(__name__)
+cors = CORS(app)
+app.config['CORS_HEADERS'] = 'Content-Type'
 
 @app.route('/chat', methods=['POST'])
+@cross_origin()
 def chat_endpoint():
     try:
         data = request.get_json()
@@ -51,4 +55,4 @@ def get_address_positions():
     # return jsonify(positions)
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run(debug=True, host="0.0.0.0")
