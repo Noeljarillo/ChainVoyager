@@ -20,7 +20,7 @@ class TestDeFiAgent(unittest.TestCase):
         self.assertEqual(classification, "1")
 
         # Test execute_action method
-        result = self.agent.execute_action(classification, user_input, self.user_wallet)
+        result = self.agent._execute_action(classification, user_input, self.user_wallet)
         self.assertIn('result', result)
 
     @patch('openai.ChatCompletion.create')
@@ -32,7 +32,9 @@ class TestDeFiAgent(unittest.TestCase):
 
         classification = "1"
         user_input = "I want to swap 100 DAI for USDC."
-        summary = self.agent.summarize_actions(classification, user_input)
+        parameters = {"token_in": "DAI", "token_out": "USDC", "amount_in": 100}
+        result = {"token_1": "DAI", "amount_1": 100, "token_2": "USDC", "amount_2": 99.99}
+        summary = self.agent._summarize_actions(classification, user_input, parameters, result)
         self.assertIsNotNone(summary)
 
     @patch('openai.ChatCompletion.create')

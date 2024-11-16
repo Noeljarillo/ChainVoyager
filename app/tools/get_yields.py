@@ -21,12 +21,9 @@ def flatten_json(y, prefix=''):
 def fetch_and_save_pools_data(db_path):
     api_url = "https://yields.llama.fi/pools"
     response = requests.get(api_url)
-    
     if response.status_code != 200:
         raise Exception(f"Failed to fetch data: {response.status_code}, {response.text}")
-    
     data = response.json().get("data", [])
-    
     conn = sqlite3.connect(db_path)
     cursor = conn.cursor()
 

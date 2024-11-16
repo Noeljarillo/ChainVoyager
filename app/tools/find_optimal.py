@@ -22,11 +22,10 @@ def get_optimal_pools(
     Retrieves and processes pool data, trains a Random Forest model to predict APY,
     and returns the top N pools based on predicted APY.
     """
-    
+
     conn = sqlite3.connect(db_path)
     query = "SELECT * FROM pools"
 
-    
     conditions = []
     params = []
 
@@ -34,7 +33,6 @@ def get_optimal_pools(
         conditions.append("exposure = ?")
         params.append(exposure)
     if stablecoin is not None:
-        
         conditions.append("stablecoin = ?")
         params.append('True' if stablecoin else 'False')
     if chain:
@@ -53,7 +51,6 @@ def get_optimal_pools(
     if conditions:
         query += " WHERE " + " AND ".join(conditions)
 
-    
     df = pd.read_sql_query(query, conn, params=params)
     conn.close()
 
@@ -61,10 +58,8 @@ def get_optimal_pools(
         print("No data found for the given filters.")
         return pd.DataFrame()
 
-    
     print(f"Retrieved {len(df)} pools with the applied filters.")
 
-    
     numerical_cols = [
         'apyBase', 'apyBase7d', 'apyBaseInception',
         'apyMean30d', 'apyPct1D', 'apyPct7D', 'apyPct30D',
@@ -72,45 +67,33 @@ def get_optimal_pools(
         'count', 'mu', 'sigma'
     ]
 
-    
     for col in numerical_cols:
         df[col] = pd.to_numeric(df[col], errors='coerce')
 
-    
     df = df.dropna(subset=['apy'])
 
-    
     categorical_cols = [
         'chain', 'project', 'symbol', 'exposure',
         'ilRisk', 'predictions_predictedClass'
     ]
-
-    
     binary_cols = ['stablecoin', 'outlier']
 
-    
-    
     reward_tokens_cols = [col for col in df.columns if col.startswith('rewardTokens_')]
     underlying_tokens_cols = [col for col in df.columns if col.startswith('underlyingTokens_')]
 
     df['num_rewardTokens'] = df[reward_tokens_cols].notnull().sum(axis=1)
     df['num_underlyingTokens'] = df[underlying_tokens_cols].notnull().sum(axis=1)
 
-    
     for col in binary_cols:
         df[col] = df[col].replace({'True': 1, 'False': 0}).astype(int)
 
-    
     feature_cols = numerical_cols + categorical_cols + ['num_rewardTokens', 'num_underlyingTokens'] + binary_cols
 
-    
     df_features = df[feature_cols].copy()
 
-    
     y = df_features['apy']
     X = df_features.drop('apy', axis=1)
 
-    
     numerical_features = [
         'apyBase', 'apyBase7d', 'apyBaseInception',
         'apyMean30d', 'apyPct1D', 'apyPct7D', 'apyPct30D',
@@ -123,7 +106,6 @@ def get_optimal_pools(
     ]
     binary_features = ['stablecoin', 'outlier']
 
-    
     numerical_transformer = Pipeline(steps=[
         ('imputer', SimpleImputer(strategy='median'))
     ])
@@ -146,35 +128,20 @@ def get_optimal_pools(
         ]
     )
 
-    
     model = Pipeline(steps=[
         ('preprocessor', preprocessor),
         ('regressor', RandomForestRegressor(n_estimators=100, random_state=42))
     ])
-
-    
     model.fit(X, y)
-
-    
     y_pred = model.predict(X)
-
-    
     df['predicted_apy'] = y_pred
-
-    
     df_sorted = df.sort_values(by='predicted_apy', ascending=False)
-
-    
     top_pools = df_sorted.head(top_n)
-
-    
     relevant_columns = [
         'pool', 'chain', 'project', 'symbol', 'apy', 'predicted_apy',
         'exposure', 'stablecoin', 'tvlUsd', 'mu', 'sigma',
         'num_rewardTokens', 'num_underlyingTokens', 'count'
     ]
-
-    
     relevant_columns = [col for col in relevant_columns if col in top_pools.columns]
 
     return top_pools[relevant_columns]
