@@ -60,3 +60,4 @@ yarl==1.17.1
 pandas
 scikit-learn
 numpy
+flask-cors
