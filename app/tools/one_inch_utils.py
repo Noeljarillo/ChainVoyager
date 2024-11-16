@@ -1,14 +1,16 @@
 import time
 import requests
-from datetime import datetime
-import os 
+import os
+from dotenv import load_dotenv
 
+load_dotenv()
 
 # API Key and Base URL
 BASE_URL = "https://api.1inch.dev/portfolio/portfolio/v4/overview/erc20"
 BASE_URL_HISTORY = "https://api.1inch.dev/history/v2.0/history"
 BASE_URL_PROTOCOLS = "https://api.1inch.dev/portfolio/portfolio/v4/overview/protocols/details"
-API_KEY = os.getenv("API_KEY")
+API_KEY = os.environ.get("1INCH_API_KEY")
+EXAMPLE_WALLET = '0x9558c18138401bCD4caE96f8be6C5caF22AD2cbf'
 
 # Headers for authorization
 HEADERS = {
@@ -87,3 +89,8 @@ def get_token_details(wallet_address: str, chain_id: str):
 
 def delay(seconds: float):
     time.sleep(seconds)
+
+if __name__ == "__main__":
+    # response = get_profit_and_loss(EXAMPLE_WALLET, 1, '2024-01-01T00:00:00Z', '2025-01-T23:59:59Z')
+    response = get_protocol_details(EXAMPLE_WALLET, 1)
+    print(response)

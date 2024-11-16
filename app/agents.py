@@ -1,16 +1,22 @@
 import os
 import openai
+import json
 from dotenv import load_dotenv
 from prompts import get_classifier_prompt, get_summarizer_prompt, \
     get_swap_parameters_prompt, get_explain_positions_prompt, \
     get_optimize_portfolio_parameters_prompt, get_create_new_position_parameters_prompt
 
+from tools.find_optimal import get_optimal_pools
+
+EXAMPLE_WALLET = '0x9558c18138401bCD4caE96f8be6C5caF22AD2cbf'
+
 load_dotenv()
 
 class DeFiAgent:
-    def __init__(self, openai_api_key):
+    def __init__(self, openai_api_key, db_path):
         self.client = openai.OpenAI(api_key=openai_api_key)
         self.model_name = 'gpt-4o'
+        self.db_path = db_path
 
     def classify_user_input(self, user_input):
         prompt = get_classifier_prompt(user_input)
@@ -65,28 +71,41 @@ class DeFiAgent:
         }
 
     def optimize_portfolio(self, user_input, user_wallet):
-        # Implement the logic to optimize the portfolio
         print("Optimizing portfolio... " + user_wallet)
+
         # Extract parameters from user input
         prompt = get_optimize_portfolio_parameters_prompt(user_input)
         parameters = self._send_message(prompt, "You are an assistant that extracts parameters from user inputs.")
         print("Parameters: " + parameters)
 
+        # convert parameters to dict
+        parameters = json.loads(parameters)
+
+        exposure = parameters.get('exposure')
+        stablecoin = parameters.get('stablecoin')
+        chain = parameters.get('chain')
+
         # Generate calldata
+        optimal_pools = get_optimal_pools(
+            self.db_path,
+            exposure=exposure,
+            stablecoin=stablecoin,
+            chain=chain,
+            ilRisk=None,
+            project=None,
+            symbol=None,
+            top_n=3
+        )
+
+        # Call proposal generator
 
         return {
-            'parameters': parameters,
-            'result': {
-                'token_1': 'DAI',
-                'token_2': 'USDC',
-                'amount_token_1': 100,
-                'amount_token_2': 100
-            }
+            'optimal_pools': optimal_pools
         }
 
     def create_new_position(self, user_input, user_wallet):
-        # Implement the logic to open a new position in an LP
         print("Creating new position... " + user_wallet)
+
         # Extract parameters from user input
         prompt = get_create_new_position_parameters_prompt(user_input)
         parameters = self._send_message(prompt, "You are an assistant that extracts parameters from user inputs.")
