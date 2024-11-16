@@ -8,13 +8,14 @@ def get_classifier_prompt(user_input):
     return f"""
 You are a classifier for a DeFi application. Categorize the following user input into one of the five categories:
 
-IF THE QUESTION IS NOT ABOUT CRYPTOCURRENCY, RETURN 5. You cannot invest in any other assets.
+IF THE QUESTION IS NOT ABOUT CRYPTOCURRENCY, RETURN 6. You cannot invest in any other assets.
 
 1. Swap two tokens (or buy/sell)
 2. Optimize a portfolio (optimize address tokens and positions)
 3. Create new position (open a position in an LP)
 4. Explain current positions or assets in the wallet
-5. Other
+5. Explore lending pools or liquidity pools available where to invest (ecosystem, defi protocols, etc). And learn more about them.
+6. Other
 
 User Input: {user_input}
 
@@ -34,7 +35,7 @@ Result: {result}
 Provide a concise summary of the actions that need to be taken. Remember that the user will need to sign the transactions.
 """
 
-# Explain positions prompt template
+# [EXPLAIN POSITIONS] Prompt Template
 def get_explain_positions_prompt(positions, user_input):
     return f"""
 You are an assistant that explains DeFi positions and token holdings in a clear and understandable way.
@@ -86,16 +87,42 @@ You are an assistant that extracts parameters from user inputs for the optimize 
 User Input: {user_input}
 
 Extract the following parameters:
-- Exposure: Single or Multi -> If the user wants to invest in a single asset or a mix of assets
-- Stablecoin: True or False -> If the user wants to invest in secure assets
-- Chain: Ethereum, Arbitrum, etc -> If the user wants to invest in a specific chain
+- Exposure: 'Single' or 'Multi' -> If the user wants to invest in a single asset or a mix of assets
+- Stablecoin: 'True' or 'False' -> If the user wants to invest in secure assets
+- Chain: 'Ethereum', 'Arbitrum', etc -> If the user wants to invest in a specific chain
 
 Output format:
 {{
-    'exposure': 'Single or Multi',
-    'stablecoin': 'True or False',
+    'exposure': 'Single' or 'Multi',
+    'stablecoin': 'True' or 'False',
     'chain': 'Ethereum, Arbitrum, etc'
 }}
+"""
+
+def get_explore_pools_parameters_prompt(user_input):
+    return f"""
+You are an assistant that extracts parameters from user inputs for the explain pools action and returns them in a JSON format.
+
+User Input: {user_input}
+
+Extract the following parameters, if any is missing, just provide an empty string:
+- Minimum APY: 5.6 (float) -> minimum apy that the user wants.
+- Pool Network: 'Ethereum' -> Name of the network of the pools.
+
+Output format:
+{{
+    'minimum_apy': '3.56',
+    'network': 'Ethereum'
+}}
+"""
+
+def get_explore_pools_prompt(pools):
+    return f"""
+You are an assistant that explains defi liquidity and lending pools.
+
+Pools: {pools}
+
+Explain in concise way the pools in a clear and understandable way.
 """
 
 def get_create_new_position_parameters_prompt(user_input):

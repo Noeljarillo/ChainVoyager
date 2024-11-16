@@ -5,7 +5,7 @@ from agents import DeFiAgent
 
 class TestDeFiAgent(unittest.TestCase):
     def setUp(self):
-        self.agent = DeFiAgent(openai_api_key=os.environ.get('OPENAI_API_KEY'))
+        self.agent = DeFiAgent(openai_api_key=os.environ.get('OPENAI_API_KEY'), db_path='../db/pools_data.db')
         self.user_wallet = "0x7B65d2662De442Eb0f79E27b9D870d96D7A6c8bA"
 
     @patch('openai.ChatCompletion.create')
@@ -41,12 +41,12 @@ class TestDeFiAgent(unittest.TestCase):
     def test_process_request_invalid_input(self, mock_openai):
         # Mock the response from OpenAI API for classification
         mock_response_classify = MagicMock()
-        mock_response_classify.choices[0].message.content = "5"
+        mock_response_classify.choices[0].message.content = "6"
         mock_openai.side_effect = [mock_response_classify]
 
         user_input = "Can you invest in gold?"
         result = self.agent.process_request(user_input, self.user_wallet)
-        self.assertEqual(result['classification'], "5")
+        self.assertEqual(result['classification'], "6")
         self.assertIsNone(result['result'])
         self.assertIn("I can only assist with the following actions", result['summary'])
 
@@ -71,13 +71,13 @@ class TestDeFiAgent(unittest.TestCase):
     def test_handle_other_action(self, mock_openai):
         # Mock classification response
         mock_response_classify = MagicMock()
-        mock_response_classify.choices[0].message.content = "5"
+        mock_response_classify.choices[0].message.content = "6"
 
         mock_openai.return_value = mock_response_classify
 
         user_input = "Tell me a joke."
         result = self.agent.process_request(user_input, self.user_wallet)
-        self.assertEqual(result['classification'], "5")
+        self.assertEqual(result['classification'], "6")
         self.assertIsNone(result['result'])
         self.assertIn("I can only assist with the following actions", result['summary'])
 

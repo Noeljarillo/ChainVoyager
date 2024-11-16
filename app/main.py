@@ -29,13 +29,12 @@ def chat_endpoint():
         agent = DeFiAgent(openai_api_key, '../db/pools_data.db')
         user_input = prompt
         result = agent.process_request(user_input, wallet)
-        print("Classification:", result['classification'])
-        print("Result:", result['result'])
-        print("Summary:", result['summary'])
-
         response = {
+            'classification': result['classification'],
             'summary': result['summary'],
-            'action': result['result']
+            'result': result['result'],
+            'parameters': result['parameters'],
+            'action': result['action']
         }
 
         return jsonify(response)

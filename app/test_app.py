@@ -16,6 +16,8 @@ class TestFlaskAPI(unittest.TestCase):
         mock_agent.process_request.return_value = {
             'classification': '1',
             'result': {'key': 'value'},
+            'parameters': {'param': 'value'},
+            'action': None,
             'summary': 'You requested to swap tokens.'
         }
         mock_agent_class.return_value = mock_agent
@@ -29,8 +31,11 @@ class TestFlaskAPI(unittest.TestCase):
 
         response_data = json.loads(response.get_data(as_text=True))
         self.assertIn('summary', response_data)
+        self.assertIn('result', response_data)
+        self.assertIn('parameters', response_data)
         self.assertIn('action', response_data)
-        self.assertEqual(response_data['action'], {'key': 'value'})
+        self.assertEqual(response_data['summary'], 'You requested to swap tokens.')
+        self.assertEqual(response_data['result'], {'key': 'value'})
 
     @patch('main.DeFiAgent')
     def test_chat_endpoint_missing_prompt(self, mock_agent_class):
