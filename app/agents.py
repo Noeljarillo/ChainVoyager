@@ -171,8 +171,12 @@ class DeFiAgent:
 
     def get_positions(self, user_wallet):
         print("Getting positions... " + user_wallet)
-        combined_details = get_combined_details(user_wallet, '1', '2023-01-01T00:00:00Z', '2024-11-10T23:59:59Z')
-        return combined_details
+        try:
+            combined_details = get_combined_details(user_wallet, '1', '2023-01-01T00:00:00Z', '2024-11-10T23:59:59Z')
+            return combined_details
+        except Exception as e:
+            print(e)
+            return None
 
     def _execute_action(self, classification, user_input, user_wallet):
         if '1' in classification:
