@@ -5,16 +5,8 @@ import { ChartConfig, ChartContainer } from "@/components/ui/chart";
 import { CardHeader, CardTitle } from "@/components/ui/card";
 
 const chartData = [
-  { name: "Bitcoin", value: 45000, color: "#f7931a" },
-  { name: "Ethereum", value: 30000, color: "#3c3c3d" },
-  { name: "Binance Coin", value: 15000, color: "#f0b90b" },
-  { name: "Cardano", value: 10000, color: "#0033ad" },
-  { name: "Solana", value: 8000, color: "#00ffa1" },
-  { name: "Polkadot", value: 7000, color: "#e6007a" },
-  { name: "Dogecoin", value: 6000, color: "#c2a633" },
-  { name: "XRP", value: 5000, color: "#00aaee" },
-  { name: "Litecoin", value: 4000, color: "#b8b8b8" },
-  { name: "Chainlink", value: 3500, color: "#2a5ada" },
+  { name: "Ethereum", value: 20.55, color: "#3c3c3d" },
+  { name: "USDC", value: 82.19, color: "#2563eb" },
 ];
 
 const chartConfig = chartData.reduce(
