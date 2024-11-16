@@ -1,76 +1,96 @@
 "use client";
+
 import { Area, AreaChart, CartesianGrid, XAxis } from "recharts";
 import { ChartConfig, ChartContainer } from "@/components/ui/chart";
 import { ChartTooltip, ChartTooltipContent } from "@/components/ui/chart";
 import { ChartLegend, ChartLegendContent } from "@/components/ui/chart";
 import { CardHeader, CardTitle } from "@/components/ui/card";
+import { useEffect, useState } from "react";
 
-const chartData = [
-  { month: "January", BTC: 12000, ETH: 8500, ADA: 3000 },
-  { month: "February", BTC: 14000, ETH: 10000, ADA: 3200 },
-  { month: "March", BTC: 13500, ETH: 9500, ADA: 3100 },
-  { month: "April", BTC: 14500, ETH: 11000, ADA: 3500 },
-  { month: "May", BTC: 15000, ETH: 12000, ADA: 4000 },
-  { month: "June", BTC: 16000, ETH: 13000, ADA: 4500 },
-];
+async function fetchChartData() {
+  const response = await fetch("/api/address-position", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      chain_id: "1",
+      wallet_address: localStorage.getItem("wallet"),
+    }),
+  });
 
-const chartConfig = {
-  BTC: {
-    label: "Bitcoin (BTC)",
-    color: "#f59e0b",
-  },
-  ETH: {
-    label: "Ethereum (ETH)",
-    color: "#2563eb",
-  },
-  ADA: {
-    label: "Cardano (ADA)",
-    color: "#10b981",
-  },
-} satisfies ChartConfig;
+  if (!response.ok) {
+    throw new Error("Failed to fetch chart data");
+  }
+
+  return response.json();
+}
 
 export function AreaChartComponent() {
+  const [chartData, setChartData] = useState<any[]>([]);
+  const [chartConfig, setChartConfig] = useState<ChartConfig>({});
+  const [loading, setLoading] = useState<boolean>(true);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    async function loadData() {
+      try {
+        const apiResponse = await fetchChartData();
+
+        const processedData = apiResponse.token.result.map((entry: any) => ({
+          month: entry.chain_id || "Unknown",
+          profit: entry.abs_profit_usd || 0,
+          roi: entry.roi || 0,
+        }));
+
+        const dynamicConfig: ChartConfig = {
+          profit: { label: "Absolute Profit (USD)", color: "#f59e0b" },
+          roi: { label: "ROI", color: "#2563eb" },
+        };
+
+        setChartData(processedData);
+        setChartConfig(dynamicConfig);
+        setLoading(false);
+      } catch (err) {
+        setError((err as Error).message);
+        setLoading(false);
+      }
+    }
+
+    loadData();
+  }, []);
+
+  if (loading) return <div>Loading chart...</div>;
+  if (error) return <div>Error loading chart: {error}</div>;
+
   return (
     <>
       <CardHeader>
-        <CardTitle>Top 3 Asset Positions Over 6 Months</CardTitle>
+        <CardTitle>Dynamic Asset Data</CardTitle>
       </CardHeader>
       <ChartContainer config={chartConfig} className="h-[200px] w-full">
-        <AreaChart accessibilityLayer data={chartData}>
+        <AreaChart data={chartData}>
           <CartesianGrid vertical={false} />
           <XAxis
             dataKey="month"
             tickLine={false}
             tickMargin={10}
             axisLine={false}
-            tickFormatter={(value) => value.slice(0, 3)}
+            tickFormatter={(value) => value.toString().slice(0, 3)}
           />
           <ChartTooltip content={<ChartTooltipContent />} />
           <ChartLegend content={<ChartLegendContent />} />
-          <Area
-            type="monotone"
-            dataKey="BTC"
-            stackId="1"
-            stroke={chartConfig.BTC.color}
-            fill={chartConfig.BTC.color}
-            fillOpacity={0.6}
-          />
-          <Area
-            type="monotone"
-            dataKey="ETH"
-            stackId="1"
-            stroke={chartConfig.ETH.color}
-            fill={chartConfig.ETH.color}
-            fillOpacity={0.6}
-          />
-          <Area
-            type="monotone"
-            dataKey="ADA"
-            stackId="1"
-            stroke={chartConfig.ADA.color}
-            fill={chartConfig.ADA.color}
-            fillOpacity={0.6}
-          />
+          {Object.keys(chartConfig).map((key) => (
+            <Area
+              key={key}
+              type="monotone"
+              dataKey={key}
+              stackId="1"
+              stroke={chartConfig[key].color}
+              fill={chartConfig[key].color}
+              fillOpacity={0.6}
+            />
+          ))}
         </AreaChart>
       </ChartContainer>
     </>
