@@ -23,17 +23,28 @@ const API_ENDPOINT = process.env["NEXT_PUBLIC_API_URL"] + "/chat";
 
 const CustomModelAdapter: ChatModelAdapter = {
   async *run({ messages, abortSignal }) {
-    const result = await fetch(API_ENDPOINT, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        messages,
-      }),
-      signal: abortSignal,
-    });
-    const { data } = await result.json();
+    let data = `Attempting to fetch data from ${API_ENDPOINT}...`;
+
+    try {
+      const res = await fetch(API_ENDPOINT, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        signal: abortSignal,
+        body: JSON.stringify({
+          prompt: JSON.stringify(messages),
+          wallet: "0x1234567890123456789012345678901234567890",
+        }),
+      });
+      data += await res.text();
+    } catch (error) {
+      if (error instanceof Error) {
+        data += error.message;
+      } else {
+        data += "Unknown error";
+      }
+    }
 
     const stream: string[] = data.match(/.{1,10}/g) || [];
 
