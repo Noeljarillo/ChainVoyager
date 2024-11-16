@@ -22,7 +22,7 @@ Only output the category number.
 """
 
 # Summarizer Prompt Template
-def get_summarizer_prompt(classification, user_input):
+def get_summarizer_prompt(classification, user_input, parameters, result):
     return f"""
 You are an assistant that summarizes actions to take based on the classification and user input.
 
@@ -33,12 +33,14 @@ Provide a concise summary of the actions that need to be taken. Remember that th
 """
 
 # Explain positions prompt template
-def get_explain_positions_prompt(positions):
+def get_explain_positions_prompt(positions, user_input):
     return f"""
 You are an assistant that explains DeFi positions and token holdings in a clear and understandable way.
 
 Here are the positions and holdings to explain:
 {positions}
+
+User Input: {user_input}
 
 Please provide a clear explanation of:
 1. Token holdings (ETH, USDC, etc) and their current values
@@ -54,3 +56,29 @@ Please provide a clear explanation of:
 
 Explain in simple terms that a non-technical user can understand. Include approximate USD values where possible.
 """
+
+# [SWAP] Extract parameters from user input
+def get_swap_parameters_prompt(user_input):
+    return f"""
+You are an assistant that extracts parameters from user inputs for the swap action and returns them in a JSON format.
+
+User Input: {user_input}
+
+Extract the following parameters:
+- Token1: Token to sell
+- Token2: Token to buy
+- AmountToken1: Amount of Token1 to sell
+
+Output format:
+{{
+    'token_1': 'Token1',
+    'token_2': 'Token2',
+    'amount_token_1': '100'
+}}
+"""
+
+def get_optimize_portfolio_parameters_prompt(user_input):
+    pass
+
+def get_create_new_position_parameters_prompt(user_input):
+    pass

@@ -1,7 +1,9 @@
 import os
 import openai
-from prompts import get_classifier_prompt, get_summarizer_prompt
 from dotenv import load_dotenv
+from prompts import get_classifier_prompt, get_summarizer_prompt, \
+    get_swap_parameters_prompt, get_explain_positions_prompt, \
+    get_optimize_portfolio_parameters_prompt, get_create_new_position_parameters_prompt
 
 load_dotenv()
 
@@ -12,26 +14,12 @@ class DeFiAgent:
 
     def classify_user_input(self, user_input):
         prompt = get_classifier_prompt(user_input)
-        response = self.client.chat.completions.create(
-            model=self.model_name,
-            messages=[
-                {"role": "system", "content": "You are an assistant that classifies user inputs into actions."},
-                {"role": "user", "content": prompt}
-            ]
-        )
-        classification = response.choices[0].message.content.strip()
+        classification = self._send_message(prompt, "You are an assistant that classifies user inputs into actions.")
         return classification
 
-    def summarize_actions(self, classification, user_input):
-        prompt = get_summarizer_prompt(classification, user_input)
-        response = self.client.chat.completions.create(
-            model=self.model_name,
-            messages=[
-                {"role": "system", "content": "You are an assistant that summarizes actions for the user."},
-                {"role": "user", "content": prompt}
-            ]
-        )
-        summary = response.choices[0].message.content.strip()
+    def _summarize_actions(self, classification, user_input, parameters, result):
+        prompt = get_summarizer_prompt(classification, user_input, parameters, result)
+        summary = self._send_message(prompt, "You are an assistant that summarizes actions for the user.")
         return summary
 
     def process_request(self, user_input, user_wallet):
@@ -42,19 +30,32 @@ class DeFiAgent:
                 'result': None,
                 'summary': "I can only assist with the following actions: Swap tokens, Optimize portfolio, Create new position."
             }
-        result = self.execute_action(classification, user_input, user_wallet)
-        summary = self.summarize_actions(classification, user_input)
+        result = self._execute_action(classification, user_input, user_wallet)
+        summary = self._summarize_actions(
+            classification,
+            user_input,
+            result['parameters'],
+            result['result']
+        )
         return {
             'classification': classification,
             'result': result,
             'summary': summary
         }
 
-    # Template for functionalities
     def swap_tokens(self, user_input, user_wallet):
-        # Implement the logic to swap two tokens
         print("Executing token swap... " + user_wallet)
+
+        # Extract parameters from user input
+        # Token1, Token2, AmountToken1
+        prompt = get_swap_parameters_prompt(user_input)
+        parameters = self._send_message(prompt, "You are an assistant that extracts parameters from user inputs.")
+        print("Parameters: " + parameters)
+
+        # Generate calldata
+
         return {
+            'parameters': parameters,
             'result': {
                 'token_1': 'DAI',
                 'token_2': 'USDC',
@@ -66,7 +67,15 @@ class DeFiAgent:
     def optimize_portfolio(self, user_input, user_wallet):
         # Implement the logic to optimize the portfolio
         print("Optimizing portfolio... " + user_wallet)
+        # Extract parameters from user input
+        prompt = get_optimize_portfolio_parameters_prompt(user_input)
+        parameters = self._send_message(prompt, "You are an assistant that extracts parameters from user inputs.")
+        print("Parameters: " + parameters)
+
+        # Generate calldata
+
         return {
+            'parameters': parameters,
             'result': {
                 'token_1': 'DAI',
                 'token_2': 'USDC',
@@ -77,8 +86,14 @@ class DeFiAgent:
 
     def create_new_position(self, user_input, user_wallet):
         # Implement the logic to open a new position in an LP
-        print("Creating new liquidity position... " + user_wallet)
+        print("Creating new position... " + user_wallet)
+        # Extract parameters from user input
+        prompt = get_create_new_position_parameters_prompt(user_input)
+        parameters = self._send_message(prompt, "You are an assistant that extracts parameters from user inputs.")
+        print("Parameters: " + parameters)
+
         return {
+            'parameters': parameters,
             'result': {
                 'token_1': 'DAI',
                 'token_2': 'USDC',
@@ -87,11 +102,32 @@ class DeFiAgent:
             }
         }
 
-    def handle_other(self, user_input):
-        # Inform the user that only the specified options are available
-        print("Action not recognized. Please choose a valid option.")
+    def explain_positions(self, user_input, user_wallet):
+        print("Explaining positions... " + user_wallet)
+        positions = self.get_positions(user_wallet)
+        prompt = get_explain_positions_prompt(positions, user_input)
+        explanation = self._send_message(prompt, "You are an assistant that explains positions.")
 
-    def execute_action(self, classification, user_input, user_wallet):
+        return {
+            'result': {
+                'summary': explanation,
+                'actions': None
+            }
+        }
+
+    def get_positions(self, user_wallet):
+        print("Getting positions... " + user_wallet)
+        return {
+            'result': {
+                'assets': {
+                    'DAI': 100,
+                    'USDC': 100,
+                    'ETH': 0.04
+                }
+            }
+        }
+
+    def _execute_action(self, classification, user_input, user_wallet):
         if '1' in classification:
             return self.swap_tokens(user_input, user_wallet)
         elif '2' in classification:
@@ -103,12 +139,25 @@ class DeFiAgent:
         else:
             return None
 
+    def _send_message(self, message, system_message):
+        response = self.client.chat.completions.create(
+            model=self.model_name,
+            messages=[
+                {"role": "system", "content": system_message},
+                {"role": "user", "content": message}
+            ]
+        )
+        return response.choices[0].message.content.strip()
+
+
 if __name__ == "__main__":
     openai_api_key = os.environ.get('OPENAI_API_KEY')
     agent = DeFiAgent(openai_api_key)
-    user_input = "Can you invest some of my tokens in gold?"
-    user_wallet = "0x1234567890123456789012345678901234567890"
-    result = agent.process_request(user_input, user_wallet)
-    print("Classification:", result['classification'])
-    print("Result:", result['result'])
-    print("Summary:", result['summary'])
+
+    while True:
+        user_input = input("Message: \n--> ")
+        user_wallet = input("Wallet: \n--> ")
+        result = agent.process_request(user_input, user_wallet)
+        print("Classification:", result['classification'])
+        print("Result:", result['result'])
+        print("Summary:", result['summary'])
