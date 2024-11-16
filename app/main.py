@@ -56,4 +56,4 @@ def get_address_positions():
     # return jsonify(positions)
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run(debug=True, host="0.0.0.0")
