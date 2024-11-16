@@ -1,0 +1,26 @@
+services:
+  ai-app:
+    container_name: ai-app
+    build:
+      context: ./app
+      dockerfile: Dockerfile
+    volumes:
+      - ./app:/app/ai-app
+    restart: always
+    env_file:
+      - ./app/.env
+
+  next-app:
+    container_name: next-app
+    build:
+      context: frontend
+      dockerfile: Dockerfile
+    volumes:
+      - ./frontend:/app/next-app
+    restart: always
+    environment:
+      - NEXT_PUBLIC_API_URL=http://ai-app:5000
+    ports:
+      - 8080:3000
+    depends_on:
+      - ai-app
