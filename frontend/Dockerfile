@@ -13,7 +13,7 @@ ENV NEXT_TELEMETRY_DISABLED 1
 
 RUN bun run build
 
-FROM oven/bun:runtime
+FROM oven/bun:latest
 
 WORKDIR /app/next-app
 
