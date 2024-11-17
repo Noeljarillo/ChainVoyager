@@ -2,6 +2,9 @@ import time
 import requests
 import os
 import json
+from dotenv import load_dotenv
+
+load_dotenv()
 
 
 # API Key and Base URL
@@ -139,6 +142,24 @@ def get_chart(wallet_address: str, chain_id: str, timerange: str):
         return None
 
 if __name__ == "__main__":
-    # response = get_profit_and_loss(EXAMPLE_WALLET, 1, '2024-01-01T00:00:00Z', '2025-01-T23:59:59Z')
-    response = get_protocol_details(EXAMPLE_WALLET, 1)
+    example_wallet = "0x9558c18138401bCD4caE96f8be6C5caF22AD2cbf"
+    chain_id = "1"  # Ethereum mainnet
+    from_timestamp = "2023-01-01T00:00:00Z"
+    to_timestamp = "2024-01-01T00:00:00Z"
+    timerange = "1Y"  # 1 year
+
+    print("\n=== Testing get_token_details ===")
+    token_details = get_token_details(example_wallet, chain_id)
+    print("Token Details:", json.dumps(token_details, indent=2))
+
+    delay(1)
+
+    print("\n=== Testing get_profit_and_loss ===")
+    pnl = get_profit_and_loss(example_wallet, chain_id, from_timestamp, to_timestamp)
+    print("Profit and Loss:", json.dumps(pnl, indent=2))
+
+    delay(1)
+
+    response = "Examples executed successfully"
+
     print(response)
